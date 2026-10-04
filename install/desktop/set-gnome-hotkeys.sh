@@ -1,81 +1,53 @@
 #!/bin/bash
 
-# Alt+F4 is very cumbersome
-gsettings set org.gnome.desktop.wm.keybindings close "['<Super>w']"
+command -v gsettings >/dev/null 2>&1 || exit 0
+set_gsetting() { gsettings set "$1" "$2" "$3" >/dev/null 2>&1 || true; }
 
-# Make it easy to maximize like you can fill left/right
-gsettings set org.gnome.desktop.wm.keybindings maximize "['<Super>Up']"
+set_gsetting org.gnome.desktop.wm.keybindings close "['<Super>w']"
+set_gsetting org.gnome.desktop.wm.keybindings maximize "['<Super>Up']"
+set_gsetting org.gnome.desktop.wm.keybindings begin-resize "['<Super>BackSpace']"
+set_gsetting org.gnome.settings-daemon.plugins.media-keys next "['<Shift>AudioPlay']"
+set_gsetting org.gnome.desktop.wm.keybindings toggle-fullscreen "['<Shift>F11']"
+set_gsetting org.gnome.mutter dynamic-workspaces false
+set_gsetting org.gnome.desktop.wm.preferences num-workspaces 4
+set_gsetting org.gnome.shell.extensions.dash-to-dock hot-keys false
 
-# Make it easy to resize undecorated windows
-gsettings set org.gnome.desktop.wm.keybindings begin-resize "['<Super>BackSpace']"
+for slot in 1 2 3 4 5 6 7 8 9; do
+  set_gsetting org.gnome.shell.keybindings "switch-to-application-$slot" "['<Alt>$slot']"
+done
+for slot in 1 2 3 4; do
+  set_gsetting org.gnome.desktop.wm.keybindings "switch-to-workspace-$slot" "['<Super>$slot']"
+done
 
-# For keyboards that only have a start/stop button for music, like Logitech MX Keys Mini
-gsettings set org.gnome.settings-daemon.plugins.media-keys next "['<Shift>AudioPlay']"
+# Search Light has precedence on Super+Space. Ulauncher remains available at
+# Super+Shift+Space when installed.
+set_gsetting org.gnome.desktop.wm.keybindings switch-input-source "@as []"
+custom_paths=() custom_names=() custom_commands=() custom_bindings=()
+add_custom() {
+  custom_paths+=("/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom${#custom_paths[@]}/")
+  custom_names+=("$1") custom_commands+=("$2") custom_bindings+=("$3")
+}
 
-# Full-screen with title/navigation bar
-gsettings set org.gnome.desktop.wm.keybindings toggle-fullscreen "['<Shift>F11']"
+if command -v ulauncher >/dev/null 2>&1 || [ -f "$HOME/.local/share/applications/ulauncher.desktop" ]; then
+  add_custom Ulauncher 'sh -c "pgrep -x ulauncher && { ulauncher-toggle || true; } || setsid -f ulauncher"' '<Super><Shift>space'
+fi
+command -v flameshot >/dev/null 2>&1 && add_custom Flameshot 'flameshot gui' '<Control>Print'
+command -v alacritty >/dev/null 2>&1 && add_custom "New Alacritty Window" alacritty '<Shift><Alt>2'
+command -v google-chrome >/dev/null 2>&1 && add_custom "New Chrome Window" 'google-chrome --new-window' '<Shift><Alt>1'
+if command -v asdcontrol >/dev/null 2>&1; then
+  detect='asdcontrol $(asdcontrol --detect /dev/usb/hiddev* 2>/dev/null | grep ^/dev/usb/hiddev | cut -d: -f1)'
+  add_custom "Apple Brightness Down (ASDControl)" "sh -c '$detect -- -5000'" '<Control>F1'
+  add_custom "Apple Brightness Up (ASDControl)" "sh -c '$detect -- +5000'" '<Control>F2'
+  add_custom "Apple Brightness Max (ASDControl)" "sh -c '$detect -- +60000'" '<Control><Shift>F2'
+fi
 
-# Use 6 fixed workspaces instead of dynamic mode
-gsettings set org.gnome.mutter dynamic-workspaces false
-gsettings set org.gnome.desktop.wm.preferences num-workspaces 6
-
-# Disable the hotkeys in the Dash to Dock extension (most likely culprit)
-gsettings set org.gnome.shell.extensions.dash-to-dock hot-keys false
-
-# Use alt for pinned apps
-gsettings set org.gnome.shell.keybindings switch-to-application-1 "['<Alt>1']"
-gsettings set org.gnome.shell.keybindings switch-to-application-2 "['<Alt>2']"
-gsettings set org.gnome.shell.keybindings switch-to-application-3 "['<Alt>3']"
-gsettings set org.gnome.shell.keybindings switch-to-application-4 "['<Alt>4']"
-gsettings set org.gnome.shell.keybindings switch-to-application-5 "['<Alt>5']"
-gsettings set org.gnome.shell.keybindings switch-to-application-6 "['<Alt>6']"
-gsettings set org.gnome.shell.keybindings switch-to-application-7 "['<Alt>7']"
-gsettings set org.gnome.shell.keybindings switch-to-application-8 "['<Alt>8']"
-gsettings set org.gnome.shell.keybindings switch-to-application-9 "['<Alt>9']"
-
-# Use super for workspaces
-gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Super>1']"
-gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Super>2']"
-gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Super>3']"
-gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Super>4']"
-gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-5 "['<Super>5']"
-gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-6 "['<Super>6']"
-
-# Reserve slots for custom keybindings
-gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/']"
-
-# Set ulauncher to Super+Space
-gsettings set org.gnome.desktop.wm.keybindings switch-input-source "@as []"
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Ulauncher'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'sh -c "pgrep -x ulauncher && { ulauncher-toggle || true; } || setsid -f ulauncher"'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<Super>space'
-
-# Set flameshot (with the sh fix for starting under Wayland) on alternate print screen key
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name 'Flameshot'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command 'sh -c -- "flameshot gui"'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding '<Control>Print'
-
-# Start a new alacritty window (rather than just switch to the already open one)
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ name 'New Alacritty Window'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command 'alacritty'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ binding '<Shift><Alt>2'
-
-# Start a new Chrome window (rather than just switch to the already open one)
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/ name 'New Chrome Window'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/ command 'google-chrome --new-window'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/ binding '<Shift><Alt>1'
-
-# Turn bightness down on Apple monitor (requires ASDControl installed)
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/ name 'Apple Brightness Down (ASDControl)'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/ binding '<Control>F1'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/ command "sh -c 'asdcontrol \$(asdcontrol --detect /dev/usb/hiddev* 2>/dev/null | grep ^/dev/usb/hiddev | cut -d: -f1) -- -5000'"
-
-# Turn bightness up on Apple monitor (requires ADSControl installed)
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/ name 'Apple Brightness Up (ASDControl)'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/ binding '<Control>F2'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/ command "sh -c 'asdcontrol \$(asdcontrol --detect /dev/usb/hiddev* 2>/dev/null | grep ^/dev/usb/hiddev | cut -d: -f1) -- +5000'"
-
-# Turn bightness up to max on Apple monitor (requires ADSControl installed)
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/ name 'Apple Brightness Max (ASDControl)'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/ binding '<Control><Shift>F2'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/ command "sh -c 'asdcontrol \$(asdcontrol --detect /dev/usb/hiddev* 2>/dev/null | grep ^/dev/usb/hiddev | cut -d: -f1) -- +60000'"
+custom_list='['
+for path in "${custom_paths[@]}"; do custom_list+="'$path',"; done
+custom_list="${custom_list%,}]"
+set_gsetting org.gnome.settings-daemon.plugins.media-keys custom-keybindings "$custom_list"
+for i in "${!custom_paths[@]}"; do
+  schema="org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:${custom_paths[$i]}"
+  set_gsetting "$schema" name "${custom_names[$i]}"
+  set_gsetting "$schema" command "${custom_commands[$i]}"
+  set_gsetting "$schema" binding "${custom_bindings[$i]}"
+done

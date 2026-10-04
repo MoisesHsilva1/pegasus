@@ -22,7 +22,8 @@ X-GNOME-Autostart-enabled=true
 EOF
 chmod +x ~/.config/autostart/ulauncher.desktop 2>/dev/null || true
 
-# 3. Configure Ulauncher Settings (Dark Theme + Super+Space Hotkey)
+# 3. Configure Ulauncher Settings. Search Light owns Super+Space; Ulauncher
+# uses Super+Shift+Space to keep the two launchers deterministic.
 mkdir -p ~/.config/ulauncher
 if [ -f "$PEGASUS_PATH/configs/ulauncher.json" ]; then
   cp "$PEGASUS_PATH/configs/ulauncher.json" ~/.config/ulauncher/settings.json 2>/dev/null || true
@@ -33,7 +34,7 @@ else
   "clear-previous-query": true,
   "disable-app-indicators": false,
   "grab-mouse-pointer": false,
-  "hotkey-show-app": "<Super>space",
+  "hotkey-show-app": "<Super><Shift>space",
   "show-indicator-icon": true,
   "show-recent-apps": "5",
   "theme-name": "dark"

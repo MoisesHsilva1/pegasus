@@ -32,15 +32,10 @@ setup_gnome() {
   [ -f "$PEGASUS_DIR/applications/Theme.sh" ] && source "$PEGASUS_DIR/applications/Theme.sh"
   step_success "Desktop launchers generated"
 
-  # GNOME Extensions
-  step_info "Installing GNOME Shell extensions..."
-  gext install tactile@lundal.io >/dev/null 2>&1 || true
-  gext install just-perfection-desktop@just-perfection >/dev/null 2>&1 || true
-  gext install blur-my-shell@aunetx >/dev/null 2>&1 || true
-  gext install space-bar@luchrioh >/dev/null 2>&1 || true
-  gext install undecorate@sun.wxg@gmail.com >/dev/null 2>&1 || true
-  gext install tophat@fflewddur.github.io >/dev/null 2>&1 || true
-  gext install AlphabeticalAppGrid@stuarthayhurst >/dev/null 2>&1 || true
+  # GNOME Extensions and portable visual assets
+  step_info "Installing GNOME Shell extensions and visual assets..."
+  [ -f "$PEGASUS_DIR/install/desktop/set-gnome-extensions.sh" ] && source "$PEGASUS_DIR/install/desktop/set-gnome-extensions.sh" >/dev/null 2>&1 || true
+  [ -f "$PEGASUS_DIR/install/desktop/install-assets.sh" ] && source "$PEGASUS_DIR/install/desktop/install-assets.sh" >/dev/null 2>&1 || true
   step_success "GNOME Shell extensions installed"
 
   # Apply GNOME Hotkeys & Settings
@@ -51,12 +46,7 @@ setup_gnome() {
   [ -f "$PEGASUS_DIR/install/desktop/set-dock.sh" ] && source "$PEGASUS_DIR/install/desktop/set-dock.sh" >/dev/null 2>&1 || true
   step_success "GNOME preferences & dock launchers configured"
 
-  # Themes
-  step_info "Applying default Matter Black theme suite..."
-  export PEGASUS_THEME_COLOR="slate"
-  export PEGASUS_THEME_BACKGROUND="matte-black/background.png"
-  [ -f "$PEGASUS_DIR/themes/set-gnome-theme.sh" ] && source "$PEGASUS_DIR/themes/set-gnome-theme.sh" >/dev/null 2>&1 || true
-  step_success "Theme suite applied"
+  step_success "GNOME extensions, preferences, and visual assets configured"
 }
 
 setup_gnome

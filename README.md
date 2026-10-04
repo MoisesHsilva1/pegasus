@@ -17,6 +17,18 @@ The goal of Pegasus is to transform a fresh Fedora Workstation installation into
 - **Privileges:** Standard user with `sudo` access
 - **Network:** Active Internet connection
 
+### Optional desktop integrations
+
+ASDControl, Google Chrome, Alacritty, Flameshot, and Ulauncher are optional.
+Pegasus configures their shortcuts only when the corresponding command or
+desktop entry is present. Search Light owns `Super+Space`; Ulauncher uses
+`Super+Shift+Space` so both can coexist.
+
+The GNOME profile installs extensions through `gext` and keeps user-installed
+assets under `$HOME`: the `macOS-Pegasus` shell theme, macOS cursor, and
+`dos-moos/BG1.jpg` wallpaper. No machine-specific `/home/<user>` path or dconf
+dump is committed.
+
 ---
 
 ## Quick Installation
