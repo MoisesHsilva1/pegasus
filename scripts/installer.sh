@@ -5,7 +5,6 @@ set -u
 PEGASUS_DIR="${PEGASUS_PATH:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 [ -f "$PEGASUS_DIR/scripts/installer-state.sh" ] || PEGASUS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export PEGASUS_PATH="$PEGASUS_DIR"
-export OMAKUB_PATH="$PEGASUS_DIR"
 export PATH="$HOME/.local/bin:$HOME/.local/share/mise/bin:/usr/local/bin:$PATH"
 
 source "$PEGASUS_DIR/scripts/ui.sh"
@@ -61,7 +60,6 @@ bootstrap_user_install() {
   mkdir -p "$HOME/.local/bin" "$HOME/.local/share"
   if [ "$PEGASUS_DIR" != "$HOME/.local/share/pegasus" ] && [ ! -e "$HOME/.local/share/pegasus" ]; then ln -s "$PEGASUS_DIR" "$HOME/.local/share/pegasus"; fi
   ln -sfn "$PEGASUS_DIR/bin/pegasus" "$HOME/.local/bin/pegasus"
-  ln -sfn "$PEGASUS_DIR/bin/pegasus" "$HOME/.local/bin/omakub"
   if [ -f "$HOME/.bashrc" ] && ! grep -q "pegasus/defaults/bash/rc" "$HOME/.bashrc"; then
     printf '\n# Pegasus Linux Configuration\nif [ -f ~/.local/share/pegasus/defaults/bash/rc ]; then\n  source ~/.local/share/pegasus/defaults/bash/rc\nfi\n' >> "$HOME/.bashrc"
   fi
@@ -89,7 +87,6 @@ edit_choices() {
   installer_state_set_choice languages "$langs"
   installer_state_set_choice user_name "$name"
   installer_state_set_choice user_email "$email"
-  export OMAKUB_USER_NAME="$name" OMAKUB_USER_EMAIL="$email"
 }
 
 show_plan() {
