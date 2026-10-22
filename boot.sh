@@ -25,10 +25,9 @@ elif command -v dnf >/dev/null 2>&1; then
 fi
 
 echo "Cloning Pegasus..."
-rm -rf ~/.local/share/pegasus ~/.local/share/omakub
+rm -rf ~/.local/share/pegasus
 git clone https://github.com/MoisesHsilva1/Pegasus.git ~/.local/share/pegasus >/dev/null
-ln -sf ~/.local/share/pegasus ~/.local/share/omakub
-if [[ $PEGASUS_REF != "master" && -n "$PEGASUS_REF" ]]; then
+if [[ "${PEGASUS_REF:-}" != "master" && -n "${PEGASUS_REF:-}" ]]; then
 	cd ~/.local/share/pegasus
 	git fetch origin "${PEGASUS_REF:-stable}" && git checkout "${PEGASUS_REF:-stable}"
 	cd -
