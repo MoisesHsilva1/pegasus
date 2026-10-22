@@ -25,7 +25,5 @@ SELECTED_LANGUAGES="Node.js,Python,Java"
 export PEGASUS_FIRST_RUN_LANGUAGES=$(gum choose "${AVAILABLE_LANGUAGES[@]}" --no-limit --selected "$SELECTED_LANGUAGES" --height 10 --header "Select programming languages")
 export OMAKUB_FIRST_RUN_LANGUAGES="$PEGASUS_FIRST_RUN_LANGUAGES"
 
-AVAILABLE_DBS=("MySQL" "Redis" "PostgreSQL")
-SELECTED_DBS="MySQL,Redis"
-export PEGASUS_FIRST_RUN_DBS=$(gum choose "${AVAILABLE_DBS[@]}" --no-limit --selected "$SELECTED_DBS" --height 5 --header "Select databases (runs in Docker)")
-export OMAKUB_FIRST_RUN_DBS="$PEGASUS_FIRST_RUN_DBS"
+# Databases are intentionally excluded from the initial installation. Use
+# `pegasus install` -> Dev Database later when Docker is explicitly requested.
