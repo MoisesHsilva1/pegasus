@@ -5,7 +5,6 @@ PEGASUS_PATH="${PEGASUS_PATH:-$HOME/.local/share/pegasus}"
 
 CHOICES=(
 	"Pegasus        Update Pegasus itself and run any migrations"
-	"Ollama         Run LLMs, like Meta's Llama3, locally"
 	"LazyGit        TUI for Git"
 	"LazyDocker     TUI for Docker"
 	"Zellij         Adds panes, tabs, and sessions to the terminal"
@@ -21,7 +20,6 @@ else
 
 	case "$INSTALLER" in
 	"pegasus-fedora"|"pegasus") INSTALLER_FILE="$PEGASUS_PATH/bin/pegasus-sub/migrate.sh" ;;
-	"ollama") INSTALLER_FILE="$PEGASUS_PATH/install/terminal/optional/app-ollama.sh" ;;
 	*) INSTALLER_FILE="$PEGASUS_PATH/install/terminal/app-$INSTALLER.sh" ;;
 	esac
 
