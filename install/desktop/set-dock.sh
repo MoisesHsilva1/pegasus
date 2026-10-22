@@ -4,7 +4,6 @@
 apps=(
 	"org.gnome.Ptyxis.desktop"
 	"org.gnome.Terminal.desktop"
-	"Neovim.desktop"
 	"code.desktop"
 	"io.dbeaver.DBeaverCommunity.desktop"
 	"com.getpostman.Postman.desktop"

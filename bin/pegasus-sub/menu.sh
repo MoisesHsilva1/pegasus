@@ -17,7 +17,7 @@ echo ""
 MENU_OPTIONS=(
   "Theme          Change visual workstation theme"
   "Font           Change programming font & font size"
-  "Install        Install optional applications & web apps"
+  "Install        Review or resume the Pegasus installation"
   "Uninstall      Remove installed applications & launchers"
   "Update         Upgrade Pegasus and managed packages"
   "Diagnostics    Run system health check (doctor)"

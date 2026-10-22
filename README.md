@@ -48,6 +48,16 @@ bash install.sh
 
 > **Note:** Do **not** run `install.sh` using `sudo`. Pegasus will request administrator permissions when necessary.
 
+The installer targets Fedora Workstation with an active GNOME session. Before
+changing the system it shows an editable plan. Use `bash install.sh --yes` for
+the default choices, `pegasus install --review` to edit and save choices, or
+`pegasus install --resume` to retry only unfinished steps. Progress is stored
+without credentials in `~/.config/pegasus/installer-state.json`, with details in
+`~/.local/state/pegasus/install.log`.
+
+The base profile does not install Docker databases, Neovim, or LazyVim. The
+manual install menu keeps database setup available for an explicit later run.
+
 ---
 
 ## Pegasus Control Center & Management

@@ -43,30 +43,8 @@ run_doctor() {
     step_error "Flatpak: Not installed"
   fi
 
-  # 3. Docker Service & Permissions
-  if command -v docker >/dev/null 2>&1; then
-    if systemctl is-active --quiet docker 2>/dev/null; then
-      step_success "Docker Service: Active (running)"
-    else
-      step_warn "Docker Service: Installed but inactive (run 'sudo systemctl start docker')"
-    fi
-
-    if groups "$USER" | grep -q "\bdocker\b"; then
-      step_success "Docker Group: User '$USER' belongs to docker group"
-    else
-      step_warn "Docker Group: User '$USER' not in docker group (run 'sudo usermod -aG docker $USER')"
-    fi
-  else
-    step_error "Docker Engine: Not installed"
-  fi
-
-  # 4. Core Development Editors
-  if command -v nvim >/dev/null 2>&1; then
-    step_success "Neovim: $(nvim --version | head -n 1)"
-  else
-    step_error "Neovim: Not installed"
-  fi
-
+  # Docker and Neovim are optional manual installs, not base-profile health checks.
+  # 3. Core Development Editors
   if command -v code >/dev/null 2>&1; then
     step_success "Visual Studio Code: $(code --version | head -n 1 2>/dev/null || echo "Installed")"
   else
@@ -79,7 +57,7 @@ run_doctor() {
     step_warn "Mise Version Manager: Not installed"
   fi
 
-  # 5. Installed Target Flatpaks
+  # 4. Installed Target Flatpaks
   print_section "Target Flatpak Applications Status"
   local flatpaks=(
     "md.obsidian.Obsidian:Obsidian"

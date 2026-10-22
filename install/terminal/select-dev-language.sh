@@ -70,12 +70,7 @@ if [[ -n "${languages:-}" ]]; then
       mise use --global go@latest
       ;;
     PHP)
-      if command -v apt-get >/dev/null 2>&1; then
-        sudo apt-get update -y
-        sudo apt-get install -y php php-cli php-curl php-intl php-mbstring php-opcache php-pgsql php-mysqlnd php-xml php-zip
-      elif command -v dnf >/dev/null 2>&1; then
-        sudo dnf -y install php php-{cli,curl,intl,mbstring,opcache,pgsql,mysqlnd,pdo,xml,zip}
-      fi
+      sudo dnf -y install php php-{cli,curl,intl,mbstring,opcache,pgsql,mysqlnd,pdo,xml,zip}
       php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
       php composer-setup.php --quiet && sudo mv composer.phar /usr/local/bin/composer
       rm composer-setup.php
