@@ -109,12 +109,7 @@ apply_theme() {
     apply_component "Zellij" "[ -f '$PEGASUS_PATH/themes/$THEME/zellij.kdl' ] && cp '$PEGASUS_PATH/themes/$THEME/zellij.kdl' ~/.config/zellij/themes/$THEME.kdl && [ -f ~/.config/zellij/config.kdl ] && sed -i 's/theme \".*\"/theme \"$THEME\"/g' ~/.config/zellij/config.kdl"
   fi
 
-  # 4. Neovim
-  if [ -d "$HOME/.config/nvim" ]; then
-    apply_component "Neovim" "[ -f '$PEGASUS_PATH/themes/$THEME/neovim.lua' ] && cp '$PEGASUS_PATH/themes/$THEME/neovim.lua' ~/.config/nvim/lua/plugins/theme.lua"
-  fi
-
-  # 5. Visual Studio Code
+  # 4. Visual Studio Code
   if [ -f "$PEGASUS_PATH/themes/$THEME/vscode.sh" ]; then
     apply_component "VS Code" "source '$PEGASUS_PATH/themes/$THEME/vscode.sh'"
   fi
