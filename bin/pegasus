@@ -3,6 +3,12 @@
 PEGASUS_PATH="${PEGASUS_PATH:-$HOME/.local/share/pegasus}"
 [ ! -d "$PEGASUS_PATH" ] && PEGASUS_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+# Installation must work even when gum is not installed yet.
+if [ "${1:-}" = install ]; then
+  shift
+  exec "$PEGASUS_PATH/scripts/installer.sh" "$@"
+fi
+
 # Ensure gum is available for interactive commands
 if ! command -v gum >/dev/null 2>&1; then
   if [ -f "$PEGASUS_PATH/install/terminal/required/app-gum.sh" ]; then
