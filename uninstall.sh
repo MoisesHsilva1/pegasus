@@ -17,7 +17,7 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 fi
 
 step_info "Removing desktop launchers..."
-rm -f ~/.local/share/applications/Pegasus.desktop ~/.local/share/applications/PegasusTheme.desktop ~/.local/share/applications/Docker.desktop ~/.local/share/applications/Neovim.desktop ~/.local/share/applications/About.desktop ~/.local/share/applications/Activity.desktop ~/.local/share/applications/Basecamp.desktop ~/.local/share/applications/HEY.desktop ~/.local/share/applications/Omakub.desktop 2>/dev/null || true
+rm -f ~/.local/share/applications/Pegasus.desktop ~/.local/share/applications/PegasusTheme.desktop ~/.local/share/applications/Docker.desktop ~/.local/share/applications/About.desktop ~/.local/share/applications/Activity.desktop ~/.local/share/applications/Basecamp.desktop ~/.local/share/applications/HEY.desktop ~/.local/share/applications/Omakub.desktop 2>/dev/null || true
 
 step_info "Removing Pegasus binaries and symlinks..."
 rm -f ~/.local/bin/pegasus ~/.local/bin/omakub 2>/dev/null || true
