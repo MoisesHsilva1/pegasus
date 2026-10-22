@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install default databases
-DBS="${PEGASUS_FIRST_RUN_DBS:-$OMAKUB_FIRST_RUN_DBS}"
+DBS="${PEGASUS_FIRST_RUN_DBS:-}"
 if [[ -n "$DBS" ]]; then
 	dbs=$DBS
 else

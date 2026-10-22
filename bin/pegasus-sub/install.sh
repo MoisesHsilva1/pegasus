@@ -7,23 +7,10 @@ CHOICES=(
   "Dev Editor        Install alternative programming editors"
   "Dev Language      Install programming language environment"
   "Dev Database      Install development database in Docker"
-  "Audacity          Record and edit audio"
-  "ASDControl        Set brightness on Apple Studio and XDR displays"
-  "Brave             Chrome-based browser with built-in ad blocking"
-  "Dropbox           Sync files across computers with ease"
-  "Discord           Communication platform for voice, video, and text messaging"
-  "Gimp              Image manipulation tool ala Photoshop"
-  "Geekbench         CPU benchmaking tool"
-  "Minecraft         Everyone's favorite blocky building game"
+  "Geekbench         CPU benchmarking tool"
   "OBS Studio        Record screencasts with inputs from both display + webcam"
-  "Ollama            Run LLMs, like Meta's Llama3, locally"
-  "Retroarch         Play retro games"
   "Spotify           Stream music from the world's most popular service"
-  "Steam             Play games from Valve's store"
   "Tailscale         Mesh VPN based on WireGuard and with Magic DNS"
-  "VirtualBox        Virtual machines to run Windows/Linux"
-  "Zoom              Attend and host video chat meetings"
-  "Web Apps          Install web apps with their own icon and shell"
   "> All             Re-run any of the default installers"
   "<< Back           "
 )
@@ -44,10 +31,8 @@ else
 
   case "$INSTALLER" in
   "dev-editor") INSTALLER_FILE="$PEGASUS_PATH/bin/pegasus-sub/install-dev-editor.sh" ;;
-  "web-apps") INSTALLER_FILE="$PEGASUS_PATH/install/desktop/optional/select-web-apps.sh" ;;
   "dev-language") INSTALLER_FILE="$PEGASUS_PATH/install/terminal/select-dev-language.sh" ;;
   "dev-database") INSTALLER_FILE="$PEGASUS_PATH/install/terminal/select-dev-storage.sh" ;;
-  "ollama") INSTALLER_FILE="$PEGASUS_PATH/install/terminal/optional/app-ollama.sh" ;;
   "tailscale") INSTALLER_FILE="$PEGASUS_PATH/install/terminal/optional/app-tailscale.sh" ;;
   "geekbench") INSTALLER_FILE="$PEGASUS_PATH/install/terminal/optional/app-geekbench.sh" ;;
   *) INSTALLER_FILE="$PEGASUS_PATH/install/desktop/optional/app-$INSTALLER.sh" ;;

@@ -24,7 +24,7 @@ pegasus theme list    # verify theme discovery
 
 ## Coding Style & Naming Conventions
 
-Use Bash with two-space indentation, readable lowercase variable names, and quoted variables unless word splitting is intentional. Prefer existing helper functions and absolute paths derived from the repository location. Name scripts descriptively in lowercase with hyphens where appropriate (for example, `select-optional-apps.sh`); retain timestamp names for migration scripts. Preserve executable permissions and keep user-facing output consistent with the existing `gum`-based UI.
+Use Bash with two-space indentation, readable lowercase variable names, and quoted variables unless word splitting is intentional. Prefer existing helper functions and absolute paths derived from the repository location. Name scripts descriptively in lowercase with hyphens where appropriate (for example, `select-dev-language.sh`); retain timestamp names for migration scripts. Preserve executable permissions and keep user-facing output consistent with the existing `gum`-based UI.
 
 ## Testing Guidelines
 

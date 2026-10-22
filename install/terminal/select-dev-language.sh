@@ -33,7 +33,7 @@ ensure_mise() {
 }
 
 # Install default programming languages
-LANGS="${PEGASUS_FIRST_RUN_LANGUAGES:-${OMAKUB_FIRST_RUN_LANGUAGES:-}}"
+LANGS="${PEGASUS_FIRST_RUN_LANGUAGES:-}"
 if [[ -n "$LANGS" ]]; then
   languages=$LANGS
 else
