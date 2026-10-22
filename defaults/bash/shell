@@ -12,4 +12,3 @@ export PATH="./bin:$HOME/.local/bin:$HOME/.local/share/pegasus/bin:$PATH"
 set +h
 
 export PEGASUS_PATH="${PEGASUS_PATH:-$HOME/.local/share/pegasus}"
-export OMAKUB_PATH="${OMAKUB_PATH:-$PEGASUS_PATH}"
