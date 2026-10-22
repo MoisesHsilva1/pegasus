@@ -19,14 +19,13 @@ setup_gnome() {
   step_success "Ulauncher installed & configured with dark theme and autostart"
 
   # Desktop Launchers
-  step_info "Generating desktop launchers (About, Activity, Basecamp, Docker, HEY, Neovim, Pegasus)..."
+  step_info "Generating desktop launchers (About, Activity, Basecamp, Docker, HEY, Pegasus)..."
   mkdir -p ~/.local/share/applications
   [ -f "$PEGASUS_DIR/applications/About.sh" ] && source "$PEGASUS_DIR/applications/About.sh"
   [ -f "$PEGASUS_DIR/applications/Activity.sh" ] && source "$PEGASUS_DIR/applications/Activity.sh"
   [ -f "$PEGASUS_DIR/applications/Basecamp.sh" ] && source "$PEGASUS_DIR/applications/Basecamp.sh"
   [ -f "$PEGASUS_DIR/applications/Docker.sh" ] && source "$PEGASUS_DIR/applications/Docker.sh"
   [ -f "$PEGASUS_DIR/applications/HEY.sh" ] && source "$PEGASUS_DIR/applications/HEY.sh"
-  [ -f "$PEGASUS_DIR/applications/Neovim.sh" ] && source "$PEGASUS_DIR/applications/Neovim.sh"
   [ -f "$PEGASUS_DIR/applications/Omakub.sh" ] && source "$PEGASUS_DIR/applications/Omakub.sh"
   [ -f "$PEGASUS_DIR/applications/pegasus.sh" ] && source "$PEGASUS_DIR/applications/pegasus.sh"
   [ -f "$PEGASUS_DIR/applications/Theme.sh" ] && source "$PEGASUS_DIR/applications/Theme.sh"
