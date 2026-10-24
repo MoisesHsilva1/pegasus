@@ -41,6 +41,34 @@ require_command() {
   command -v "$1" >/dev/null 2>&1 || { step_error "Missing required dependency: $1"; return 1; }
 }
 
+bootstrap_gum() {
+  local gum_version
+
+  if command -v gum >/dev/null 2>&1 && gum_version="$(gum --version 2>&1)"; then
+    installer_state_set_step interface_bootstrap success "gum available: $gum_version"
+    step_success "Interactive interface ready ($gum_version)"
+    return 0
+  fi
+
+  print_section "Interactive interface"
+  installer_state_set_step interface_bootstrap running
+  step_info "gum is not installed; attempting automatic installation from Charmbracelet"
+  if source "$PEGASUS_DIR/install/terminal/required/app-gum.sh" \
+    && command -v gum >/dev/null 2>&1 \
+    && gum_version="$(gum --version 2>&1)"; then
+    installer_state_set_step interface_bootstrap success "gum available: $gum_version"
+    step_success "Interactive interface ready ($gum_version)"
+    return 0
+  fi
+
+  installer_state_set_step interface_bootstrap failed "gum installation failed"
+  print_box_error "The interactive interface (gum) could not be installed."
+  echo "Install it manually and run Pegasus again:"
+  echo "  sudo dnf install -y gum"
+  echo "See $PEGASUS_LOG_FILE for the installation details."
+  return 1
+}
+
 validate_system() {
   print_section "System validation"
   [ "$EUID" -ne 0 ] || { print_box_error "Do not run Pegasus as root"; return 1; }
@@ -96,7 +124,7 @@ show_plan() {
   echo "Optional apps: $(jq -r '.choices.optional_apps // "none"' "$PEGASUS_STATE_FILE")"
   echo "Languages: $(jq -r '.choices.languages // "none"' "$PEGASUS_STATE_FILE")"
   echo "Sudo: package installation, repositories and system settings"
-  echo "External repositories: Microsoft VS Code and Flathub"
+  echo "External repositories: Charm (gum), Mise, Microsoft VS Code and Flathub"
   echo "User changes: shell hook, GNOME settings and Alacritty style (existing files preserved by default)"
 }
 
@@ -153,12 +181,22 @@ main() {
   validate_system || { installer_state_set_step prerequisites blocked "system validation failed"; return 1; }
   installer_state_set_step prerequisites success
   default_choices
+  if [ "$YES" -eq 0 ] || [ "$REVIEW" -eq 1 ]; then
+    bootstrap_gum || return 1
+  else
+    installer_state_set_step interface_bootstrap skipped "not required for --yes"
+  fi
   if [ "$RESUME" -eq 0 ]; then
     edit_choices || { step_warn "Selection cancelled; no installation was run"; return 1; }
   fi
   show_plan
   [ "$REVIEW" -eq 1 ] && { step_success "Review complete"; return 0; }
-  [ "$YES" -eq 1 ] || gum confirm "Proceed with this plan?" || { step_warn "Installation cancelled"; return 1; }
+  if [ "$YES" -eq 0 ] && ! gum confirm "Proceed with this plan?"; then
+    installer_state_set_step confirmation cancelled "user declined the installation plan"
+    step_warn "Installation cancelled"
+    return 1
+  fi
+  export PEGASUS_FIRST_RUN_LANGUAGES="$(jq -r '.choices.languages // ""' "$PEGASUS_STATE_FILE")"
   export PEGASUS_INSTALLER_YES="$YES"
   bootstrap_user_install
   run_step dependencies "Base dependencies" scripts/packages.sh || true
