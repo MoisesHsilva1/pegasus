@@ -48,9 +48,20 @@ bash install.sh
 
 > **Note:** Do **not** run `install.sh` using `sudo`. Pegasus will request administrator permissions when necessary.
 
-The installer targets Fedora Workstation with an active GNOME session. Before
-changing the system it shows an editable plan. Use `bash install.sh --yes` for
-the default choices, `pegasus install --review` to edit and save choices, or
+The installer targets Fedora Workstation with an active GNOME session. In
+interactive mode it checks for the `gum` interface before showing the plan. If
+`gum` is missing, Pegasus attempts to install it from Charmbracelet and
+validates that the command is usable. If that bootstrap cannot complete, install
+it manually and run the installer again:
+
+```bash
+sudo dnf install -y gum
+bash install.sh
+```
+
+Before changing the system, the installer shows an editable plan. Use
+`bash install.sh --yes` for the default choices without interactive prompts,
+`pegasus install --review` to edit and save choices, or
 `pegasus install --resume` to retry only unfinished steps. Progress is stored
 without credentials in `~/.config/pegasus/installer-state.json`, with details in
 `~/.local/state/pegasus/install.log`.
