@@ -147,30 +147,67 @@ pegasus doctor
   ```bash
   pegasus update
   ```
-- **Safely uninstall Pegasus:**
-  ```bash
-  pegasus uninstall
-  ```
 
-During installation, Pegasus creates the persistent `pegasus-uninstall`
-command at `~/.local/bin/pegasus-uninstall`. It uses the recovery manifest and
-backups stored under `~/.local/state/pegasus/recovery`, so it remains available
-even after the Pegasus checkout is removed.
+## How to Uninstall Pegasus
 
-Available options:
+To remove Pegasus after it has been installed, run this command from any
+directory:
 
 ```bash
-pegasus-uninstall --dry-run             # preview changes without modifying files
-pegasus-uninstall --yes                 # run without interactive confirmation
-pegasus-uninstall --report FILE         # save a detailed report
-pegasus-uninstall --purge-recovery      # remove recovery data after success
+pegasus-uninstall
 ```
 
-The uninstaller restores files and GNOME settings only when they still match
-the last state applied by Pegasus. Files or settings changed afterward are
-preserved and reported as conflicts. Packages installed by Pegasus are listed
-separately and require explicit confirmation before removal. Recovery data and
-the report are preserved by default.
+You can also start it through the Pegasus CLI:
+
+```bash
+pegasus uninstall
+```
+
+The recommended process is:
+
+1. Preview what will be restored or removed:
+   ```bash
+   pegasus-uninstall --dry-run
+   ```
+2. Run the uninstaller normally and answer `y` when it asks for confirmation:
+   ```bash
+   pegasus-uninstall
+   ```
+3. If package removal is offered, confirm it separately if you also want to
+   remove packages installed by Pegasus.
+
+During installation, Pegasus creates `~/.local/bin/pegasus-uninstall`. This
+is a standalone command: it does not depend on the Pegasus checkout, so it
+continues to work even if `~/.local/share/pegasus` is deleted first.
+
+The recovery manifest and backups are kept at:
+
+```text
+~/.local/state/pegasus/recovery/
+```
+
+Useful options:
+
+```bash
+pegasus-uninstall --dry-run                    # preview only; change nothing
+pegasus-uninstall --yes                        # confirm the complete operation automatically
+pegasus-uninstall --report ~/pegasus-report.txt # save a detailed report
+pegasus-uninstall --purge-recovery             # delete backups after a successful uninstall
+```
+
+The uninstaller is deliberately conservative. It restores a file or GNOME
+setting only when it still matches the last value applied by Pegasus. If you
+changed it afterward, Pegasus leaves it untouched and records the conflict in
+the report. Recovery data and the generated report are preserved unless
+`--purge-recovery` is explicitly used.
+
+If `pegasus-uninstall` is not found, the installation did not create the
+persistent uninstaller or the user's `~/.local/bin` is not in `PATH`. Run it
+using its full path:
+
+```bash
+~/.local/bin/pegasus-uninstall
+```
 
 ---
 
