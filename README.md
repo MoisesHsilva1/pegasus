@@ -4,12 +4,6 @@ Pegasus is a customized Fedora developer environment setup inspired by Omakub.
 
 The goal of Pegasus is to transform a fresh Fedora Workstation installation into a complete, ready-to-use development workstation with pre-configured tools, terminal workflows, desktop themes, and GNOME customizations.
 
----
-
-<img width="1920" height="1080" alt="Screenshot From 2026-07-25 01-18-13" src="https://github.com/user-attachments/assets/ff643af8-b1db-4b54-93be-853b4949f98e" />
-
-
-
 ## Requirements
 
 - **OS:** Fedora Workstation 40+
@@ -153,10 +147,30 @@ pegasus doctor
   ```bash
   pegasus update
   ```
-- **Uninstall Pegasus Launchers & Configurations:**
+- **Safely uninstall Pegasus:**
   ```bash
   pegasus uninstall
   ```
+
+During installation, Pegasus creates the persistent `pegasus-uninstall`
+command at `~/.local/bin/pegasus-uninstall`. It uses the recovery manifest and
+backups stored under `~/.local/state/pegasus/recovery`, so it remains available
+even after the Pegasus checkout is removed.
+
+Available options:
+
+```bash
+pegasus-uninstall --dry-run             # preview changes without modifying files
+pegasus-uninstall --yes                 # run without interactive confirmation
+pegasus-uninstall --report FILE         # save a detailed report
+pegasus-uninstall --purge-recovery      # remove recovery data after success
+```
+
+The uninstaller restores files and GNOME settings only when they still match
+the last state applied by Pegasus. Files or settings changed afterward are
+preserved and reported as conflicts. Packages installed by Pegasus are listed
+separately and require explicit confirmation before removal. Recovery data and
+the report are preserved by default.
 
 ---
 
