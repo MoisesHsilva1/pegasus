@@ -4,6 +4,10 @@ PEGASUS_PATH="${PEGASUS_PATH:-$HOME/.local/share/pegasus}"
 [ ! -d "$PEGASUS_PATH" ] && PEGASUS_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 CURRENT_THEME_FILE="$HOME/.config/pegasus/current_theme"
+if [ -f "${PEGASUS_PATH:-}/scripts/installer-state.sh" ]; then
+  source "$PEGASUS_PATH/scripts/installer-state.sh"
+  installer_manifest_init 2>/dev/null || true
+fi
 trap 'stty echo 2>/dev/null; tput cnorm 2>/dev/null' EXIT INT TERM
 
 get_current_theme() {
@@ -83,9 +87,17 @@ apply_theme() {
   echo "Applying $TITLE theme..."
   echo ""
 
-  # Save active theme state
+  # Save active theme state and preserve the original managed values once.
   mkdir -p "$HOME/.config/pegasus"
+  installer_manifest_track_file "$CURRENT_THEME_FILE" 2>/dev/null || true
+  for theme_file in "$HOME/.config/alacritty/theme.toml" "$HOME/.config/zellij/config.kdl" "$HOME/.config/btop/btop.conf"; do
+    installer_manifest_track_file "$theme_file" 2>/dev/null || true
+  done
+  installer_manifest_track_setting org.gnome.desktop.interface color-scheme 2>/dev/null || true
   echo "$THEME" > "$CURRENT_THEME_FILE"
+  if [ -n "${PEGASUS_MANIFEST_FILE:-}" ] && [ -f "$PEGASUS_MANIFEST_FILE" ]; then
+    installer_manifest_update --arg theme "$THEME" 'if .themes.original == null then .themes.original=$theme else . end | .themes.current=$theme' 2>/dev/null || true
+  fi
 
   # 1. GNOME Desktop & System Colors & Wallpaper
   if [ -f "$PEGASUS_PATH/themes/$THEME/gnome.sh" ]; then
@@ -121,6 +133,8 @@ apply_theme() {
 
   echo ""
   echo "Theme applied successfully."
+  installer_manifest_record_setting org.gnome.desktop.interface color-scheme 2>/dev/null || true
+  installer_manifest_refresh_files 2>/dev/null || true
   echo ""
   return 0
 }

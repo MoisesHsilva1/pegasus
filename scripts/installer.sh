@@ -84,12 +84,41 @@ validate_system() {
 }
 
 bootstrap_user_install() {
+  local tracked_file
+  for tracked_file in \
+    "$HOME/.bashrc" "$HOME/.inputrc" "$HOME/.local/bin/pegasus" \
+    "$HOME/.local/share/pegasus" "$HOME/.config/pegasus/current_theme" \
+    "$HOME/.config/alacritty/theme.toml" "$HOME/.config/alacritty/font.toml" \
+    "$HOME/.config/zellij/config.kdl" "$HOME/.config/Code/User/settings.json" \
+    "$HOME/.config/ulauncher/settings.json" "$HOME/.config/Typora/themes" \
+    "$HOME/.local/share/applications/PegasusControlCenter.desktop" "$HOME/.local/share/applications/PegasusTheme.desktop" \
+    "$HOME/.local/share/applications/icons/Pegasus.png"; do
+    installer_manifest_track_file "$tracked_file"
+  done
+  local setting
+  for setting in \
+    'org.gnome.desktop.interface|color-scheme' \
+    'org.gnome.desktop.interface|monospace-font-name' \
+    'org.gnome.desktop.interface|cursor-theme' \
+    'org.gnome.desktop.interface|cursor-size' \
+    'org.gnome.desktop.default-applications.terminal|exec' \
+    'org.gnome.desktop.default-applications.terminal|exec-arg' \
+    'org.gnome.shell|favorite-apps'; do
+    installer_manifest_track_setting "${setting%%|*}" "${setting#*|}"
+  done
   chmod +x "$PEGASUS_DIR"/{install.sh,boot.sh,update.sh,uninstall.sh} "$PEGASUS_DIR/bin/pegasus" "$PEGASUS_DIR/bin/pegasus-sub"/*.sh "$PEGASUS_DIR/scripts"/*.sh 2>/dev/null || step_warn "Could not update all executable bits"
   mkdir -p "$HOME/.local/bin" "$HOME/.local/share"
   if [ "$PEGASUS_DIR" != "$HOME/.local/share/pegasus" ] && [ ! -e "$HOME/.local/share/pegasus" ]; then ln -s "$PEGASUS_DIR" "$HOME/.local/share/pegasus"; fi
   ln -sfn "$PEGASUS_DIR/bin/pegasus" "$HOME/.local/bin/pegasus"
   if [ -f "$HOME/.bashrc" ] && ! grep -q "pegasus/defaults/bash/rc" "$HOME/.bashrc"; then
     printf '\n# Pegasus Linux Configuration\nif [ -f ~/.local/share/pegasus/defaults/bash/rc ]; then\n  source ~/.local/share/pegasus/defaults/bash/rc\nfi\n' >> "$HOME/.bashrc"
+  fi
+  if [ ! -e "$HOME/.local/bin/pegasus-uninstall" ]; then
+    install -m 755 "$PEGASUS_DIR/scripts/pegasus-uninstaller.sh" "$HOME/.local/bin/pegasus-uninstall"
+  elif grep -q 'self-contained' "$HOME/.local/bin/pegasus-uninstall" 2>/dev/null; then
+    install -m 755 "$PEGASUS_DIR/scripts/pegasus-uninstaller.sh" "$HOME/.local/bin/pegasus-uninstall"
+  else
+    step_warn "Existing ~/.local/bin/pegasus-uninstall is not owned by Pegasus; preserving it"
   fi
 }
 
@@ -180,6 +209,8 @@ main() {
   print_banner
   validate_system || { installer_state_set_step prerequisites blocked "system validation failed"; return 1; }
   installer_state_set_step prerequisites success
+  # Capture package ownership before bootstrap steps can install gum or other tools.
+  installer_manifest_snapshot_packages
   default_choices
   if [ "$YES" -eq 0 ] || [ "$REVIEW" -eq 1 ]; then
     bootstrap_gum || return 1
@@ -208,6 +239,18 @@ main() {
   local app apps; apps="$(jq -r '.choices.optional_apps // ""' "$PEGASUS_STATE_FILE")"
   for app in ${apps//,/ }; do run_optional "$app"; done
   installer_state_set_step finalize success
+  installer_manifest_refresh_files
+  for setting in \
+    'org.gnome.desktop.interface|color-scheme' \
+    'org.gnome.desktop.interface|monospace-font-name' \
+    'org.gnome.desktop.interface|cursor-theme' \
+    'org.gnome.desktop.interface|cursor-size' \
+    'org.gnome.desktop.default-applications.terminal|exec' \
+    'org.gnome.desktop.default-applications.terminal|exec-arg' \
+    'org.gnome.shell|favorite-apps'; do
+    installer_manifest_record_setting "${setting%%|*}" "${setting#*|}"
+  done
+  installer_manifest_finalize_packages
   summarize
 }
 
