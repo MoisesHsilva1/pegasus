@@ -1,5 +1,8 @@
 #!/bin/bash
 
+if [ -x "$HOME/.local/bin/pegasus-uninstall" ]; then
+  exec "$HOME/.local/bin/pegasus-uninstall" "$@"
+fi
 PEGASUS_PATH="${PEGASUS_PATH:-$HOME/.local/share/pegasus}"
 [ ! -d "$PEGASUS_PATH" ] && PEGASUS_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
